@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container">
+        <!-- Start Menu -->
+        <div id="start_menu" class="menu">
+            <div>
+                <h1>Battleship</h1>
+
+                <!-- Phase 1 -->
+                <div id="player_start">
+                    <div style="display: flex; justify-content: center;">
+                        <button id="start_button" class="menu_button">Start Game</button>
+                    </div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div id="player_input" style="display: none;">
+                    <!-- Username -->
+                    <div>
+                        <label for="">Enter Username</label><br><br>
+                        <input id="player_name" type="text" placeholder="usernameABC" style="text-align: center;"><br><br>
+                        <button id="username_button" class="menu_button">Next</button>
+                    </div>
+                </div>
+
+                <!-- Phase 3 -->
+                <div id="player_setup" style="display: none;">
+                    <!-- Setup Grid (10x10) -->
+                    <div>
+                        <label for="" style="color: limegreen;">PLACE YOUR SHIPS</label>
+                        <h3 id="ship_display"></h3>
+                        <div id="setup_grid"></div><br>
+                        <!-- <button id="setup_button" class="menu_button">Next</button> -->
+                    </div>
+
+                </div>
+                <p>Developed By: Blacksmith</p>
+            </div>
+        </div>
+
+        <!-- Game -->
+        <div id="game">
+
+        </div>
+
+        <!-- End Menu -->
+        <div id="end_menu" class="menu" style="display: none;"></div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
