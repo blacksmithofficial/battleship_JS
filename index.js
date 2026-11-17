@@ -8,18 +8,23 @@ const player_setup = document.getElementById('player_setup');
 const player_name = document.getElementById('player_name');
 const ship_display = document.getElementById('ship_display');
 const setup_grid = document.getElementById('setup_grid');
+const war_grid = document.getElementById('war_grid');
 const start_button = document.getElementById('start_button');
 const username_button = document.getElementById('username_button');
 const end_menu = document.getElementById('end_menu');
 const game = document.getElementById('game');
 const setup_button = document.getElementById('setup_button');
+const player_name_display = document.getElementById(`player_name_display`);
 
 // [ Setup ] : Variables
 const ship_color = "grey";
+const strike_color = "whitesmoke";
+const hit_color = "crimson";
 let ship_display_list = ["Destroyer", "Submarine", "Cruiser", "Battleship", "Aircraft Carrier"];
 let ship_length_reference = [2, 3, 3, 4, 5];
 let player_fleet = [[], [], [], [], []];
 let ship_display_count = 0;
+let user_name;
 
 // [ Setup ] : Event Listeners
 start_button.addEventListener("click", () => {
@@ -30,7 +35,10 @@ username_button.addEventListener("click", () => {
     player_input.style.display = "none";
     player_setup.style.display = "flex";
     ship_display.innerHTML = ship_display_list[ship_display_count];
+    user_name = player_name.value;
     ship_display.style.color = "white";
+    player_name_display.innerHTML = `ADMIRAL ${user_name}`;
+    
 
     // [ Populate Setup Grid ]
     let coordinates = [];
@@ -76,7 +84,7 @@ username_button.addEventListener("click", () => {
             // [ Debug ]
             // console.log(coordinate.id);
             // console.log(player_fleet);
-            console.log(ship_display_count);
+            // console.log(ship_display_count);
         })
     })
 
@@ -86,10 +94,37 @@ username_button.addEventListener("click", () => {
     // console.log(player_fleet);
 }) 
 
+// [ Populate Setup War Grid ]
+let coordinates = [];
+for(let i = 0; i < 100; i++){
+    const coordinate_box = document.createElement("div");
+        
+    coordinate_box.style.width = "28px";
+    coordinate_box.style.height = "28px";
+    coordinate_box.style.border = "1px solid green";
+    coordinate_box.id = `${i}`;
+    coordinate_box.className = "war_box";
+
+    coordinates.push(coordinate_box);
+
+    war_grid.appendChild(coordinate_box);
+}
+
 // [ Key takeaway : A DOM element can only exist in one position in the DOM at a time. ]
 //    [ Appending the same element repeatedly moves it rather than creating copies ]
 //    [ When creating multiple new elements via for loop : 
 //          move const coordinate_box = document.createElement() inside for loop 
 //          instead of outside for loop ]
 
+strike();
 
+// [ Functions ] : Grid
+function strike(){
+    coordinates.forEach((coordinate) => {
+        coordinate.addEventListener("click", () => {
+            coordinate.style.backgroundColor = strike_color;
+            coordinate.style.animation = "missed_strike 0.3s alternate";
+            coordinate.style.animationIterationCount = "infinite";
+        })
+    })
+}

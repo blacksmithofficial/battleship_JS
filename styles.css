@@ -47,6 +47,13 @@ body{
 .coordinate_box:hover{
     background-color: rgba(149, 250, 48, 0.247);
 }
+.war_box:hover{
+    background-color: rgba(149, 250, 48, 0.247);
+}
+.war_box{
+    /* animation: missed_strike 0.3s alternate;
+    animation-iteration-count: infinite; */
+}
 
 /* ID's */
 #container{
@@ -89,4 +96,55 @@ body{
     background-color: black;
     height: 300px;
     width: 300px;
+}
+#game{
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    background-color: rgb(92, 92, 92);
+    background-color: rgba(92, 92, 92, 0.658);
+    background-color: rgba(92, 92, 92, 0.322);
+    width: 680px;
+    height: 580px;
+
+    border-radius: 10px;
+    color: rgb(40, 40, 40);
+    border: 3px solid rgb(77, 77, 77);
+/* 
+    animation: wargrid 1s ease-in;
+    animation-iteration-count: infinite; */
+}
+#war_grid{
+    border: 1px solid greenyellow;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: black;
+    height: 300px;
+    width: 300px;
+
+    
+}
+
+
+/* ANIMATIONS */
+@keyframes wargrid {
+    0%{
+        background-color: rgb(92, 92, 92);
+    }
+    50%{
+        background-color: rgba(92, 92, 92, 0.658);
+    }
+    100%{
+        background-color: rgba(92, 92, 92, 0.322);
+    }
+}
+@keyframes missed_strike {
+    0%{
+        background-color: whitesmoke;
+    }
+    100%{
+        background-color: rgba(245, 245, 245, 0.219);
+    }
 }

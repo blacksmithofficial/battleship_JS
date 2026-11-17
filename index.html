@@ -24,8 +24,8 @@
                 <div id="player_input" style="display: none;">
                     <!-- Username -->
                     <div>
-                        <label for="">Enter Username</label><br><br>
-                        <input id="player_name" type="text" placeholder="usernameABC" style="text-align: center;"><br><br>
+                        <label for="">Enter Username Admiral</label><br><br>
+                        <input id="player_name" type="text" placeholder="admiral" style="text-align: center;"><br><br>
                         <button id="username_button" class="menu_button">Next</button>
                     </div>
                 </div>
@@ -37,6 +37,7 @@
                         <label for="" style="color: limegreen;">PLACE YOUR SHIPS</label>
                         <h3 id="ship_display"></h3>
                         <div id="setup_grid"></div><br>
+                        <label id="player_name_display" for="" style="color: white;">ADMIRAL</label>
                         <!-- <button id="setup_button" class="menu_button">Next</button> -->
                     </div>
 
@@ -46,8 +47,15 @@
         </div>
 
         <!-- Game -->
-        <div id="game">
-
+        <div id="game" style="display: none;">
+            <!-- War Grid -->
+            <div>
+                <h1>Battleship</h1>
+                <label for="" style="color: limegreen;">SINK ENEMY SHIPS</label><br><br>
+                <div id="war_grid"></div><br>
+                <label for="" style="color: white;">ENEMY TERRITORY</label><br><br>
+                <button class="menu_button">Scope</button>
+            </div>
         </div>
 
         <!-- End Menu -->
