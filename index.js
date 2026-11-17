@@ -56,45 +56,57 @@ username_button.addEventListener("click", () => {
         setup_grid.appendChild(coordinate_box);
     }
 
-    // [ Place Your Ships ]
-    coordinates.forEach((coordinate) => {
-        coordinate.addEventListener("click", () => {
+    // [ Place Your Ships ] : Implementation 2
+    for(let i = 0; i < coordinates.length; i++){
+        let open_spaces = [];
+        coordinates[i].addEventListener("click", ()=>{
             // [ Conditional ] : Duplicate Check
-            if(coordinate.style.backgroundColor === ship_color){
-                // [ Conditional ] : Duplicate Check
+            if(coordinates[i].style.backgroundColor === ship_color){
                 console.log("DUPLICATE");
             } else {
-                player_fleet[ship_display_count].push(parseInt(coordinate.id));
-                coordinate.style.backgroundColor = ship_color;
+                // [ Conditional ] 
+                if(player_fleet[ship_display_count].length == 0) {
+                    player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
+                    coordinates[i].style.backgroundColor = ship_color;
+                    open_spaces = available_spaces(parseInt(coordinates[i].id));
+                }
 
-                // [Conditional]
-                if(player_fleet[ship_display_count].length == ship_length_reference[ship_display_count] && ship_display_count <= 4){
-                    ship_display_count++;
-                        if(ship_display_count === 5){
-                            // [Continue to Next Phase]
-                            console.log("continue");
-                            player_setup.style.display = "none";
-                            start_menu.style.display = "none";
-                            game.style.display = "flex";
+                if(player_fleet[ship_display_count.length] > 0){
+                    // [ Loop ] : Loop Through Open Spaces 
+                    for(let j = 0; j < open_spaces.length; j++){
+                        if(parseInt(coordinates[i].id) !== open_spaces[j]){
+                            // [ Debug ]
+                            console.log("Out of bounds");
+                            return;
+                            // player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
+                            // coordinates[i].style.backgroundColor = ship_color;
                         }
-                    ship_display.innerHTML = ship_display_list[ship_display_count];    
-                } 
+                    }
+                }
+
+                // player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
+                // coordinates[i].style.backgroundColor = ship_color;
+                // open_spaces = available_spaces(parseInt(coordinates[i].id));
+
+                // [ Conditional ] : Progress to Next Ship
+                if(player_fleet[ship_display_count].length == ship_length_reference[ship_display_count] && ship_display_count <= 4){
+                    // [ Conditional ] : Continue to Next Phase
+                    if(ship_display_count === 5){
+                        player_setup.style.display = "none";
+                        start_menu.style.display = "none";
+                        game.style.display = "flex";
+                    }
+                    ship_display_count++;
+                    ship_display.innerHTML = ship_display_list[ship_display_count];
+                }
             }
-
             // [ Debug ]
-            // console.log(coordinate.id);
-            // console.log(player_fleet);
-            // console.log(ship_display_count);
+            console.log(open_spaces);
         })
-    })
-
-    // [ Debug ]
-    // console.log(setup_grid.children.length);
-    // console.log(coordinates.length);
-    // console.log(player_fleet);
+    }
 }) 
 
-// [ Populate Setup War Grid ]
+// [ Populate War_Grid ]
 let coordinates = [];
 for(let i = 0; i < 100; i++){
     const coordinate_box = document.createElement("div");
@@ -127,4 +139,59 @@ function strike(){
             coordinate.style.animationIterationCount = "infinite";
         })
     })
+}
+
+// [ Functions ] : Set-up
+function available_spaces(coordinate){
+    const edges = [ 0,1,2,3,4,5,6,7,8,9,
+                    10,20,30,40,50,60,70,80,
+                    19,29,39,49,59,69,79,89,
+                    90,91,92,93,94,95,96,97,98 ];
+
+    let up = coordinate - 10;
+    let down = coordinate + 10;
+    let left = coordinate - 1;
+    let right = coordinate + 1;
+    let list = [up, down, left, right];
+    let left_edge = [10, 20, 30, 40, 50, 60, 70, 80];
+    let right_edge = [19, 29, 39, 49, 59, 69, 79, 89];
+
+    // [ Loop ] : Top and Bottom Edges
+    for(let i = 0; i < edges.length; i++){
+        // [ Conditional ]
+        if(coordinate === edges[i]){
+            console.log('Edge Coordinate');
+            // [ Conditional ] : Top Edge
+            if(coordinate > 0 && coordinate < 9){
+                list = [left, right, down];
+            } else if (coordinate === 0){
+                // [ Conditional ] : Top Left Corner
+                list = [right, down];
+            } else if (coordinate === 9){
+                // [ Conditional ] : Top Right Corner
+                list = [left, down];
+            }
+            // [ Conditional ] : Bottom Edge
+            if(coordinate > 90 && coordinate < 99){
+                list = [left, right, up];
+            } else if (coordinate === 90){
+                // [ Conditional ] : Bottom Left Corner
+                list = [right, up];
+            } else if (coordinate === 99){
+                // [ Conditional ] : Bottom Right Corner
+                list = [left, up];
+            }
+        }
+    }
+
+    // [ Loop ] : Left and Right Edges
+    for(let i = 0; i < 8; i++){
+        if(coordinate === left_edge[i]){
+            list = [up, down, right];
+        } else if (coordinate === right_edge[i]){
+            list = [up, down, left];
+        }
+    }
+    
+    return list;
 }
