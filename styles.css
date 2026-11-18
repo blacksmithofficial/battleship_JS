@@ -51,8 +51,8 @@ body{
     background-color: rgba(149, 250, 48, 0.247);
 }
 .war_box{
-    /* animation: missed_strike 0.3s alternate;
-    animation-iteration-count: infinite; */
+    /* animation: missed_strike 0.3s alternate; */
+    /* animation-iteration-count: ; */
 }
 
 /* ID's */

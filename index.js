@@ -40,7 +40,7 @@ username_button.addEventListener("click", () => {
     player_name_display.innerHTML = `ADMIRAL ${user_name}`;
     
 
-    // [ Populate Setup Grid ]
+    // [ Loop ] : Populate Setup Grid
     let coordinates = [];
     for(let i = 0; i < 100; i++){
         const coordinate_box = document.createElement("div");
@@ -56,57 +56,53 @@ username_button.addEventListener("click", () => {
         setup_grid.appendChild(coordinate_box);
     }
 
-    // [ Place Your Ships ] : Implementation 2
+    // [ Loop ] : Scan Every Cooordinate Box
+    let open_spaces = [];
     for(let i = 0; i < coordinates.length; i++){
-        let open_spaces = [];
         coordinates[i].addEventListener("click", ()=>{
             // [ Conditional ] : Duplicate Check
             if(coordinates[i].style.backgroundColor === ship_color){
                 console.log("DUPLICATE");
             } else {
-                // [ Conditional ] 
-                if(player_fleet[ship_display_count].length == 0) {
+                // [ Conditional ] : Player Fleet Empty
+                if (player_fleet[ship_display_count].length == 0) {
                     player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
                     coordinates[i].style.backgroundColor = ship_color;
                     open_spaces = available_spaces(parseInt(coordinates[i].id));
-                }
-
-                if(player_fleet[ship_display_count.length] > 0){
-                    // [ Loop ] : Loop Through Open Spaces 
-                    for(let j = 0; j < open_spaces.length; j++){
-                        if(parseInt(coordinates[i].id) !== open_spaces[j]){
-                            // [ Debug ]
-                            console.log("Out of bounds");
-                            return;
-                            // player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
-                            // coordinates[i].style.backgroundColor = ship_color;
-                        }
+                } 
+                // [ Loop ] : Force available options ONLY
+                for(let j = 0; j < open_spaces.length; j++){
+                    // [ Conditional ] : Coordinate Equals Open Space
+                    if(parseInt(coordinates[i].id) == open_spaces[j]){
+                        player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
+                        coordinates[i].style.backgroundColor = ship_color;
+                        open_spaces = available_spaces(parseInt(coordinates[i].id));
                     }
                 }
-
-                // player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
-                // coordinates[i].style.backgroundColor = ship_color;
-                // open_spaces = available_spaces(parseInt(coordinates[i].id));
-
                 // [ Conditional ] : Progress to Next Ship
                 if(player_fleet[ship_display_count].length == ship_length_reference[ship_display_count] && ship_display_count <= 4){
                     // [ Conditional ] : Continue to Next Phase
-                    if(ship_display_count === 5){
+                    if(ship_display_count >= 4){
                         player_setup.style.display = "none";
                         start_menu.style.display = "none";
                         game.style.display = "flex";
                     }
                     ship_display_count++;
+                    open_spaces = [];
                     ship_display.innerHTML = ship_display_list[ship_display_count];
                 }
+                // [ Loop ] : Display Available Spaces
+                for(let i = 0; i < open_spaces.length; i++){
+                    // [ Conditional ] : Length ( TBA )
+                    coordinates[open_spaces[i]].style.animation = "missed_strike 0.3s alternate";
+                    coordinates[open_spaces[i]].style.animationIterationCount = "1";
+                }
             }
-            // [ Debug ]
-            console.log(open_spaces);
         })
     }
 }) 
 
-// [ Populate War_Grid ]
+// [ Loop ] : Populate War_Grid
 let coordinates = [];
 for(let i = 0; i < 100; i++){
     const coordinate_box = document.createElement("div");
@@ -140,7 +136,9 @@ function strike(){
         })
     })
 }
+function scope(){
 
+}
 // [ Functions ] : Set-up
 function available_spaces(coordinate){
     const edges = [ 0,1,2,3,4,5,6,7,8,9,
