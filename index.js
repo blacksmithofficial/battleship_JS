@@ -18,6 +18,7 @@ const game = document.getElementById('game');
 const setup_button = document.getElementById('setup_button');
 const player_name_display = document.getElementById(`player_name_display`);
 const scope_button = document.getElementById('scope_button');     // [ Toggle ] : show_ships
+const shot_displays = document.querySelectorAll(".shot_indicator");
 
 // [ Variables ] : Set-Up
 const ship_color = "grey";
@@ -162,12 +163,8 @@ function display_grid(coordinates, parent){
             }
         }
     } else {
-
         // [ Conditional ]
-        // console.log("Displaying Player Ships...");
         if(parent === player_grid){
-            console.log("Displaying Player Ships...");
-            console.log(player_ships);
             // [ Loop ]
             for(let i = 0; i < coordinates.length; i++){
                 for(let j = 0; j < player_ships.length; j++){
@@ -182,9 +179,6 @@ function display_grid(coordinates, parent){
         }
     }
 }
-function hide_grid(parent){
-    parent.style.display = "none";
-}
 function strike(coordinates){
     coordinates.forEach((coordinate) => {
         coordinate.addEventListener("click", () => {
@@ -192,14 +186,27 @@ function strike(coordinates){
             coordinate.style.animation = "missed_strike 0.3s alternate";
             coordinate.style.animationIterationCount = "infinite";
 
+            // [ Conditional ] : MISSED SHOT
+            shot_displays.forEach((display) => {
+                display.style.display = "flex";
+            })
+            setTimeout(() => {
+                shot_displays.forEach((display) => {
+                    display.style.display = "none";
+                })
+            }, 250)
+
             player_strikes.push(parseInt(coordinate.id));
             // document.body.className = "trigger";
             // document.body.style.animation = "missed_strike 0.1s alternate"
             // document.body.style.animationIterationCount = "1";
-
             // console.log(player_strikes);
         })
     })
+    // [ Conditional ] : MISSED SHOT
+    shot_displays.forEach((display) => {
+        display.style.display = "none";
+    });
 }
 function scope(){
     show_ships = !show_ships;
@@ -209,19 +216,19 @@ function scope(){
         // [ Loop ] : Display War_Grid
         player_grid.style.display = "none";
         war_grid.style.display = "flex";
-        grid_indicator.innerHTML = "Enemy Territory";
+        grid_indicator.innerHTML = "ENEMY WATERS";
 
         display_grid(enemy_coordinates, war_grid);
     } else {
         war_grid.style.display = "none";
         player_grid.style.display = "flex";
-        grid_indicator.innerHTML = "Player Territory";
+        grid_indicator.innerHTML = "PLAYER WATERS";
 
         display_grid(game_coordinates, player_grid);
     }
 
     // [ Debug ]
-    console.log(`show_ships : ${show_ships}`);
+    // console.log(`show_ships : ${show_ships}`);
 }
 
 // [ Functions ] : Set-up

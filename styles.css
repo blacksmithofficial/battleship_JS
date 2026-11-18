@@ -57,6 +57,18 @@ body{
 .trigger{
     background-color: white;
 }
+.shot_indicator{
+    width: 100px;
+    height: 100px;
+    margin: 15px;
+    display: flex;
+
+    /* border: 1px solid white; */
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+    color: azure;
+}
 
 /* ID's */
 #container{
@@ -107,8 +119,8 @@ body{
     text-align: center;
 
     background-color: rgb(92, 92, 92);
-    background-color: rgba(92, 92, 92, 0.658);
-    background-color: rgba(92, 92, 92, 0.322);
+    /* background-color: rgba(92, 92, 92, 0.658);
+    background-color: rgba(92, 92, 92, 0.322); */
     width: 680px;
     height: 580px;
 
@@ -128,7 +140,8 @@ body{
     width: 300px;
 }
 #player_grid{
-    border: 1px solid greenyellow;
+    border: 1px solid aliceblue;
+    color: aliceblue;
     display: flex;
     flex-wrap: wrap;
     background-color: black;
