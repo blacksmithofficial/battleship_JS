@@ -6,8 +6,10 @@ const player_start = document.getElementById('player_start');
 const player_input = document.getElementById('player_input');
 const player_setup = document.getElementById('player_setup');
 const player_name = document.getElementById('player_name');
+const player_grid = document.getElementById('player_grid');
 const ship_display = document.getElementById('ship_display');
 const setup_grid = document.getElementById('setup_grid');
+const grid_indicator = document.getElementById('grid_indicator');
 const war_grid = document.getElementById('war_grid');
 const start_button = document.getElementById('start_button');
 const username_button = document.getElementById('username_button');
@@ -15,16 +17,21 @@ const end_menu = document.getElementById('end_menu');
 const game = document.getElementById('game');
 const setup_button = document.getElementById('setup_button');
 const player_name_display = document.getElementById(`player_name_display`);
+const scope_button = document.getElementById('scope_button');     // [ Toggle ] : show_ships
 
-// [ Setup ] : Variables
+// [ Variables ] : Set-Up
 const ship_color = "grey";
 const strike_color = "whitesmoke";
 const hit_color = "crimson";
+let show_ships = false;
 let ship_display_list = ["Destroyer", "Submarine", "Cruiser", "Battleship", "Aircraft Carrier"];
 let ship_length_reference = [2, 3, 3, 4, 5];
 let player_fleet = [[], [], [], [], []];
+let player_ships = [];
+let player_strikes = [];
 let ship_display_count = 0;
 let user_name;
+let player_fleet_health = 17;
 
 // [ Setup ] : Event Listeners
 start_button.addEventListener("click", () => {
@@ -39,22 +46,9 @@ username_button.addEventListener("click", () => {
     ship_display.style.color = "white";
     player_name_display.innerHTML = `ADMIRAL ${user_name}`;
     
-
     // [ Loop ] : Populate Setup Grid
     let coordinates = [];
-    for(let i = 0; i < 100; i++){
-        const coordinate_box = document.createElement("div");
-        
-        coordinate_box.style.width = "28px";
-        coordinate_box.style.height = "28px";
-        coordinate_box.style.border = "1px solid green";
-        coordinate_box.id = `${i}`;
-        coordinate_box.className = "coordinate_box";
-
-        coordinates.push(coordinate_box);
-
-        setup_grid.appendChild(coordinate_box);
-    }
+    display_grid(coordinates, setup_grid);
 
     // [ Loop ] : Scan Every Cooordinate Box
     let open_spaces = [];
@@ -67,6 +61,7 @@ username_button.addEventListener("click", () => {
                 // [ Conditional ] : Player Fleet Empty
                 if (player_fleet[ship_display_count].length == 0) {
                     player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
+                    player_ships.push(parseInt(coordinates[i].id));
                     coordinates[i].style.backgroundColor = ship_color;
                     open_spaces = available_spaces(parseInt(coordinates[i].id));
                 } 
@@ -75,6 +70,7 @@ username_button.addEventListener("click", () => {
                     // [ Conditional ] : Coordinate Equals Open Space
                     if(parseInt(coordinates[i].id) == open_spaces[j]){
                         player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
+                        player_ships.push(parseInt(coordinates[i].id));
                         coordinates[i].style.backgroundColor = ship_color;
                         open_spaces = available_spaces(parseInt(coordinates[i].id));
                     }
@@ -101,22 +97,16 @@ username_button.addEventListener("click", () => {
         })
     }
 }) 
+scope_button.addEventListener("click", () => {
+    scope();
+    
+})
 
-// [ Loop ] : Populate War_Grid
-let coordinates = [];
-for(let i = 0; i < 100; i++){
-    const coordinate_box = document.createElement("div");
-        
-    coordinate_box.style.width = "28px";
-    coordinate_box.style.height = "28px";
-    coordinate_box.style.border = "1px solid green";
-    coordinate_box.id = `${i}`;
-    coordinate_box.className = "war_box";
+// [ Variables ] : In-Game
+let game_coordinates = [];
+let enemy_coordinates = [];
 
-    coordinates.push(coordinate_box);
-
-    war_grid.appendChild(coordinate_box);
-}
+display_grid(enemy_coordinates, war_grid);
 
 // [ Key takeaway : A DOM element can only exist in one position in the DOM at a time. ]
 //    [ Appending the same element repeatedly moves it rather than creating copies ]
@@ -124,21 +114,116 @@ for(let i = 0; i < 100; i++){
 //          move const coordinate_box = document.createElement() inside for loop 
 //          instead of outside for loop ]
 
-strike();
-
 // [ Functions ] : Grid
-function strike(){
+function display_grid(coordinates, parent){
+    // [ Conditional ] 
+    if (coordinates.length === 0 ){
+        // [ Conditional ] : War or Player
+        if(parent === war_grid){
+            for(let i = 0; i < 100; i++){
+                const coordinate_box = document.createElement("div");
+        
+                coordinate_box.style.width = "28px";
+                coordinate_box.style.height = "28px";
+                coordinate_box.style.border = "1px solid green";
+                coordinate_box.id = `${i}`;
+                coordinate_box.className = "war_box";
+
+                coordinates.push(coordinate_box);
+
+                parent.appendChild(coordinate_box);
+            }
+
+            strike(coordinates);
+        }
+        if(parent === player_grid || parent === setup_grid){
+            for(let i = 0; i < 100; i++){
+                const coordinate_box = document.createElement("div");
+        
+                coordinate_box.style.width = "28px";
+                coordinate_box.style.height = "28px";
+                coordinate_box.style.border = "1px solid green";
+                coordinate_box.id = `${i}`;
+                coordinate_box.className = "war_box";
+
+                coordinates.push(coordinate_box);
+
+                parent.appendChild(coordinate_box);
+            }
+            if (parent === player_grid){
+                // [ Loop ]
+                for(let i = 0; i < coordinates.length; i++){
+                    for(let j = 0; j < player_ships.length; j++){
+                        if(parseInt(coordinates[i].id) === player_ships[j]){
+                            coordinates[i].style.backgroundColor = ship_color;
+                        }
+                    }
+                }                
+            }
+        }
+    } else {
+
+        // [ Conditional ]
+        // console.log("Displaying Player Ships...");
+        if(parent === player_grid){
+            console.log("Displaying Player Ships...");
+            console.log(player_ships);
+            // [ Loop ]
+            for(let i = 0; i < coordinates.length; i++){
+                for(let j = 0; j < player_ships.length; j++){
+                    if(parseInt(coordinates[i].id) === player_ships[j]){
+                        coordinates[i].style.backgroundColor = ship_color;
+                    }
+                }
+            }
+        } else {
+            // [ Conditional ]
+            strike(coordinates);
+        }
+    }
+}
+function hide_grid(parent){
+    parent.style.display = "none";
+}
+function strike(coordinates){
     coordinates.forEach((coordinate) => {
         coordinate.addEventListener("click", () => {
             coordinate.style.backgroundColor = strike_color;
             coordinate.style.animation = "missed_strike 0.3s alternate";
             coordinate.style.animationIterationCount = "infinite";
+
+            player_strikes.push(parseInt(coordinate.id));
+            // document.body.className = "trigger";
+            // document.body.style.animation = "missed_strike 0.1s alternate"
+            // document.body.style.animationIterationCount = "1";
+
+            // console.log(player_strikes);
         })
     })
 }
 function scope(){
+    show_ships = !show_ships;
 
+    // [ Conditional ]
+    if (!show_ships){
+        // [ Loop ] : Display War_Grid
+        player_grid.style.display = "none";
+        war_grid.style.display = "flex";
+        grid_indicator.innerHTML = "Enemy Territory";
+
+        display_grid(enemy_coordinates, war_grid);
+    } else {
+        war_grid.style.display = "none";
+        player_grid.style.display = "flex";
+        grid_indicator.innerHTML = "Player Territory";
+
+        display_grid(game_coordinates, player_grid);
+    }
+
+    // [ Debug ]
+    console.log(`show_ships : ${show_ships}`);
 }
+
 // [ Functions ] : Set-up
 function available_spaces(coordinate){
     const edges = [ 0,1,2,3,4,5,6,7,8,9,

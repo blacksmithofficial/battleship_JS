@@ -54,6 +54,9 @@ body{
     /* animation: missed_strike 0.3s alternate; */
     /* animation-iteration-count: ; */
 }
+.trigger{
+    background-color: white;
+}
 
 /* ID's */
 #container{
@@ -123,8 +126,17 @@ body{
     background-color: black;
     height: 300px;
     width: 300px;
+}
+#player_grid{
+    border: 1px solid greenyellow;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: black;
+    height: 300px;
+    width: 300px;
+}
+#grid_indicator{
 
-    
 }
 
 
