@@ -199,8 +199,8 @@ function strike(coordinates){
             // [ Debug ]
             console.log(`player_fleet_health : ${player_fleet_health}`);
             console.log(`cpu_fleet_health : ${cpu_fleet_health}`);
-            console.log(`player_strikes : [${player_strikes}]`); 
-            console.log(`cpu_strikes : [${cpu_strikes}]`);
+            // console.log(`player_strikes : [${player_strikes}]`); 
+            // console.log(`cpu_strikes : [${cpu_strikes}]`);
         })
     })
 }
@@ -328,6 +328,16 @@ function place_ships(fleet, ships, coordinates){
                     cpu_fleet[ship_display_count].push(parseInt(coordinates[location].id));
                     cpu_ships.push(parseInt(coordinates[location].id));
                     cpu_spaces = available_spaces(parseInt(coordinates[location].id));
+
+                    // [ Loop ] : Display Available Spaces
+                    for(let i = 0; i < open_spaces.length; i++){
+                        // [ Conditional ] : Length ( TBA )
+                        coordinates[open_spaces[i]].style.animation = "missed_strike 0.3s alternate";
+                        coordinates[open_spaces[i]].style.animationIterationCount = "1";
+                    }
+                    console.log(`cpu_fleet`);
+                    console.log(cpu_fleet);
+                    console.log(`cpu_ships : [${cpu_ships}]`);
 
                     return; // Exit Function
                 } 
