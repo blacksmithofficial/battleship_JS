@@ -54,55 +54,8 @@ username_button.addEventListener("click", () => {
     // [ Loop ] : Populate Setup Grid
     let coordinates = [];
     display_grid(coordinates, setup_grid);
-
     // [ Loop ] : Place Player Ships
-    let open_spaces = [];
-    for(let i = 0; i < coordinates.length; i++){
-        coordinates[i].addEventListener("click", ()=>{
-            // [ Conditional ] : Duplicate Check
-            if(coordinates[i].style.backgroundColor === ship_color){
-                console.log("DUPLICATE");
-            } else {
-                // [ Conditional ] : Player Fleet Empty
-                if (player_fleet[ship_display_count].length == 0) {
-                    player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
-                    player_ships.push(parseInt(coordinates[i].id));
-                    coordinates[i].style.backgroundColor = ship_color;
-                    open_spaces = available_spaces(parseInt(coordinates[i].id));
-                } 
-                // [ Loop ] : Force available options ONLY
-                for(let j = 0; j < open_spaces.length; j++){
-                    // [ Conditional ] : Coordinate Equals Open Space
-                    if(parseInt(coordinates[i].id) == open_spaces[j]){
-                        player_fleet[ship_display_count].push(parseInt(coordinates[i].id));
-                        player_ships.push(parseInt(coordinates[i].id));
-                        coordinates[i].style.backgroundColor = ship_color;
-                        open_spaces = available_spaces(parseInt(coordinates[i].id));
-                    }
-                }
-                // [ Conditional ] : Progress to Next Ship
-                if(player_fleet[ship_display_count].length == ship_length_reference[ship_display_count] && ship_display_count <= 4){
-                    // [ Conditional ] : Continue to Next Phase
-                    if(ship_display_count >= 4){
-                        player_setup.style.display = "none";
-                        start_menu.style.display = "none";
-                        game.style.display = "flex";
-                    }
-                    ship_display_count++;
-                    open_spaces = [];
-                    ship_display.innerHTML = ship_display_list[ship_display_count];
-                }
-                // [ Loop ] : Display Available Spaces
-                for(let i = 0; i < open_spaces.length; i++){
-                    // [ Conditional ] : Length ( TBA )
-                    coordinates[open_spaces[i]].style.animation = "missed_strike 0.3s alternate";
-                    coordinates[open_spaces[i]].style.animationIterationCount = "1";
-                }
-            }
-        })
-    }
-
-    // [ Loop ] : Place CPU Ships
+    place_ships(player_fleet, player_ships, coordinates);
 }) 
 scope_button.addEventListener("click", () => {
     scope();  
@@ -123,9 +76,9 @@ display_grid(enemy_coordinates, war_grid);
 
 // [ Functions ] : Grid
 function display_grid(coordinates, parent){
-    // [ Conditional ] 
+    // [ Conditional ] : Populate Grid
     if (coordinates.length === 0 ){
-        // [ Conditional ] : War or Player
+        // [ Conditional ] :  War Grid
         if(parent === war_grid){
             for(let i = 0; i < 100; i++){
                 const coordinate_box = document.createElement("div");
@@ -140,10 +93,8 @@ function display_grid(coordinates, parent){
 
                 parent.appendChild(coordinate_box);
             }
-
             strike(coordinates);
-        }
-        if(parent === player_grid || parent === setup_grid){
+        } else if(parent === player_grid || parent === setup_grid){
             for(let i = 0; i < 100; i++){
                 const coordinate_box = document.createElement("div");
         
@@ -169,18 +120,18 @@ function display_grid(coordinates, parent){
             }
         }
     } else {
-        // [ Conditional ]
+        // [ Conditional ] : Player Grid (Currently Shown)
         if(parent === player_grid){
-            // [ Loop ]
+            // [ Loop ] : Scan Player Grid
             for(let i = 0; i < coordinates.length; i++){
-                // Place Ships
+                // [ System ] : Place Ships
                 for(let j = 0; j < player_ships.length; j++){
                     if(parseInt(coordinates[i].id) === player_ships[j]){
                         coordinates[i].style.backgroundColor = ship_color;
                     }
                 }
 
-                // Show Cpu Attacks
+                // [ System ] : Show Cpu Attacks
                 for(let j = 0; j < cpu_strikes.length; j++){
                     if(parseInt(coordinates[i].id) === cpu_strikes[j]){
                         coordinates[i].style.backgroundColor = strike_color;
@@ -189,7 +140,7 @@ function display_grid(coordinates, parent){
                     }
                 }
 
-                // Check Ships
+                // [ System ] : Hit Check
                 for(let j = 0; j < player_ships.length; j++){
                     if(parseInt(coordinates[i].id) === player_ships[j]){
                         for(let k = 0; k < cpu_strikes.length; k++){
@@ -200,15 +151,10 @@ function display_grid(coordinates, parent){
                             }
                         }
                     }
-                    // if(player_ships[j] === cpu_strikes[j]){
-                    //     coordinates[i].style.backgroundColor = hit_color;
-                    //     coordinates[i].style.animation = "hit_strike 0.3s alternate";
-                    //     coordinates[i].style.animationIterationCount = "infinite";
-                    // }
                 }
             }
         } else {
-            // [ Conditional ]
+            // [ Conditional ] : War Grid (Currently Shown)
             strike(coordinates);
         }
     }
@@ -216,63 +162,51 @@ function display_grid(coordinates, parent){
 function strike(coordinates){
     coordinates.forEach((coordinate) => {
         coordinate.addEventListener("click", () => {
+            // [ Conditional ] : DUPLICATE
+            if(coordinate.style.className == "hitbox"){
+                console.log("Already Hit");
+                return;     // Exit Function
+            }
+            // [ Loop ] : Iterate through CPU Ships
+            for(let i = 0; i < cpu_ships.length; i++){
+                // [ Conditional ] : HIT
+                if(parseInt(coordinate.id) === cpu_ships[i]){
+                    cpu_fleet_health--;
+                    coordinate.style.backgroundColor = hit_color;
+                    player_strikes.push(parseInt(coordinate.id));
+
+                    console.log("ENEMY HIT !");
+                    return;     // ( Exit Function )
+                } 
+            }
+
             coordinate.style.backgroundColor = strike_color;
             coordinate.style.animation = "missed_strike 0.3s alternate";
             coordinate.style.animationIterationCount = "infinite";
+            coordinate.style.className = "hit_box";
 
-            // [ Conditional ]
-            if(coordinate.style.className == "hit_box"){
-                // console.log("Already Hit");
-                return;    // Exit Function
-            } else {
-                // coordinate.style.className = "hit_box";
-                player_strikes.push(parseInt(coordinate.id));
+            player_strikes.push(parseInt(coordinate.id));
 
-                // [ Conditional ] : Successfully Hit CPU 
-                for (let i = 0; i < cpu_ships.length; i++){
-                    if(parseInt(coordinate.id) === cpu_ships[i]){
-                        cpu_fleet_health--;
-
-                        // [ Debug ]
-                        console.log("!! ENEMY HIT !!");
-                        return;
-                    }
-                }
-
-                coordinate.style.className = "hit_box";
-                        
-                // [ Conditional ] : MISSED SHOT
+            shot_displays.forEach((display) => {
+                display.style.display = "flex";
+            })
+            setTimeout(() => {
                 shot_displays.forEach((display) => {
-                    display.style.display = "flex";
+                    display.style.display = "none";
                 })
-                setTimeout(() => {
-                    shot_displays.forEach((display) => {
-                        display.style.display = "none";
-                    })
-                }, 250);
+            }, 250);
 
-                // [ CPU Attempt ] : cpu_strike()
-                cpu_strike();
+            // [ CPU Attempt ] : cpu_strike()
+            cpu_strike();
 
-
-                // [ Debug ]
-                // console.log(coordinate.id);
-                console.log(`player_strikes : [${player_strikes}]`);
-            }
-
-            // // [ Conditional ] : MISSED SHOT
-            // shot_displays.forEach((display) => {
-            //     display.style.display = "flex";
-            // })
-            // setTimeout(() => {
-            //     shot_displays.forEach((display) => {
-            //         display.style.display = "none";
-            //     })
-            // }, 250)
+            // [ Debug ]
+            console.log(`player_fleet_health : ${player_fleet_health}`);
+            console.log(`cpu_fleet_health : ${cpu_fleet_health}`);
+            console.log(`player_strikes : [${player_strikes}]`); 
+            console.log(`cpu_strikes : [${cpu_strikes}]`);
         })
     })
 }
-
 function cpu_strike(){
     // [ Generate random strikes ]
     let strike = Math.floor(Math.random(0, 100) * 100);
@@ -281,8 +215,8 @@ function cpu_strike(){
     // [ Loop ] : Iterate through Player Ships
     for (let i = 0; i < player_ships.length; i++){
         if(strike === player_ships[i]){
+            player_fleet_health--;
 
-            
             // [ Debug ]
             console.log("PLAYER HIT !!!");
         }
@@ -291,8 +225,10 @@ function cpu_strike(){
     // [ Check Player Fleet ]
     display_grid(game_coordinates, player_grid);
 
-    console.log("cpu_strike()");
-    console.log(`cpu_strikes : [${cpu_strikes}]`);
+    // console.log(`player_fleet_health : ${player_fleet_health}`);
+    // console.log("cpu_strike()");
+    // console.log(`cpu_strikes : [${cpu_strikes}]`);
+
 }
 function scope(){
     show_ships = !show_ships;
@@ -370,4 +306,71 @@ function available_spaces(coordinate){
     }
     
     return list;
+}
+function place_ships(fleet, ships, coordinates){
+    // [ Loop ] : Place Player Ships
+    let open_spaces = [];
+    let cpu_spaces = [];
+    for(let i = 0; i < coordinates.length; i++){
+        coordinates[i].addEventListener("click", ()=>{
+            // [ Conditional ] : Duplicate Check
+            if(coordinates[i].style.backgroundColor === ship_color){
+                console.log("DUPLICATE");
+            } else {
+                // [ Conditional ] : Player Fleet Empty
+                if (fleet[ship_display_count].length == 0 && cpu_fleet[ship_display_count].length == 0) {
+                    fleet[ship_display_count].push(parseInt(coordinates[i].id));
+                    ships.push(parseInt(coordinates[i].id));
+                    coordinates[i].style.backgroundColor = ship_color;
+                    open_spaces = available_spaces(parseInt(coordinates[i].id));
+
+                    // CPU 
+                    let location = Math.floor(Math.random(0, 100) * 100);
+                    cpu_fleet[ship_display_count].push(parseInt(coordinates[location].id));
+                    cpu_ships.push(parseInt(coordinates[location].id));
+                    cpu_spaces = available_spaces(parseInt(coordinates[location].id));
+
+                    return; // Exit Function
+                } 
+                
+
+                // [ Loop ] : Force available options ONLY
+                let index = Math.floor(Math.random(0, cpu_spaces.length) * cpu_spaces.length);
+                cpu_fleet[ship_display_count].push(cpu_spaces[index]);
+                cpu_ships.push(cpu_spaces[index]);
+
+                for(let j = 0; j < open_spaces.length; j++){
+                    // [ Conditional ] : Coordinate Equals Open Space
+                    if(parseInt(coordinates[i].id) == open_spaces[j]){
+                        fleet[ship_display_count].push(parseInt(coordinates[i].id));
+                        ships.push(parseInt(coordinates[i].id));
+                        coordinates[i].style.backgroundColor = ship_color;
+                        open_spaces = available_spaces(parseInt(coordinates[i].id));
+                    }
+                }
+
+                // [ Conditional ] : Progress to Next Ship
+                if(fleet[ship_display_count].length == ship_length_reference[ship_display_count] && ship_display_count <= 4){
+                    // [ Conditional ] : Continue to Next Phase
+                    if(ship_display_count >= 4){
+                        player_setup.style.display = "none";
+                        start_menu.style.display = "none";
+                        game.style.display = "flex";
+                    }
+                    ship_display_count++;
+                    open_spaces = [];
+                    ship_display.innerHTML = ship_display_list[ship_display_count];
+                }
+                // [ Loop ] : Display Available Spaces
+                for(let i = 0; i < open_spaces.length; i++){
+                    // [ Conditional ] : Length ( TBA )
+                    coordinates[open_spaces[i]].style.animation = "missed_strike 0.3s alternate";
+                    coordinates[open_spaces[i]].style.animationIterationCount = "1";
+                }
+                console.log(`cpu_fleet`);
+                console.log(cpu_fleet);
+                console.log(`cpu_ships : [${cpu_ships}]`);
+            }
+        })
+    }
 }
