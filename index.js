@@ -19,6 +19,9 @@ const setup_button = document.getElementById('setup_button');
 const player_name_display = document.getElementById(`player_name_display`);
 const scope_button = document.getElementById('scope_button');     // [ Toggle ] : show_ships
 const shot_displays = document.querySelectorAll(".shot_indicator");
+const game_over_title = document.getElementById("game_over_title");
+const play_again = document.getElementById("play_again");
+const exit_game = document.getElementById("exit_game");
 
 // [ Variables ] : Set-Up
 const ship_color = "grey";
@@ -27,11 +30,11 @@ const hit_color = "crimson";
 let show_ships = false;
 let ship_display_list = ["Destroyer", "Submarine", "Cruiser", "Battleship", "Aircraft Carrier"];
 let ship_length_reference = [2, 3, 3, 4, 5];
-let player_fleet = [[], [], [], [], []];
-let cpu_fleet = [[], [], [], [], []];
-let player_ships = [];
-let cpu_ships = [];
-let player_strikes = [];
+let player_fleet = [[], [], [], [], []];    // x
+let cpu_fleet = [[], [], [], [], []];       // x
+let player_ships = [];                      // x
+let cpu_ships = [];                         // x
+let player_strikes = [];                    
 let cpu_strikes = [];
 let ship_display_count = 0;
 let user_name;
@@ -82,15 +85,12 @@ function display_grid(coordinates, parent){
         if(parent === war_grid){
             for(let i = 0; i < 100; i++){
                 const coordinate_box = document.createElement("div");
-        
                 coordinate_box.style.width = "28px";
                 coordinate_box.style.height = "28px";
                 coordinate_box.style.border = "1px solid green";
                 coordinate_box.id = `${i}`;
                 coordinate_box.className = "war_box";
-
                 coordinates.push(coordinate_box);
-
                 parent.appendChild(coordinate_box);
             }
             strike(coordinates);
@@ -175,7 +175,7 @@ function strike(coordinates){
                     console.log("ENEMY HIT !");
 
                     game_manager();
-                    
+
                     return;     // ( Exit Function )
                 } 
             }
@@ -252,11 +252,48 @@ function scope(){
     // [ Debug ]
     // console.log(`show_ships : ${show_ships}`);
 }
+function reset(){
+    // [ Set-up ] : Clear Set-up Grid
+    clear_grid(setup_grid);
+    // [ System ] : Clear War-Grid
+    clear_grid(war_grid);
+    // [ System ] : Clear Player Grid
+    clear_grid(player_grid);
+
+    // [ System ] : Reset Game Variables
+    show_ships = false;
+    player_fleet = [[], [], [], [], []];
+    cpu_fleet = [[], [], [], [], []];
+    player_ships = [];
+    cpu_ships = [];
+    player_strikes = [];
+    cpu_strikes = [];
+    game_coordinates = [];
+    enemy_coordinates = [];
+    player_fleet_health = 17;
+    cpu_fleet_health = 17;
+    ship_display_count = 0;
+    user_name = "";
+
+}
 function game_manager(){
     // [ Conditional ] : Player Health <= 0
     if(player_fleet_health === 0){
         game.style.display = "none";
         end_menu.style.display = "flex";
+
+        play_again.addEventListener("click", () => {
+            reset();
+
+            end_menu.style.display = "none";
+            game.style.display = "flex";
+        })
+        exit_game.addEventListener("click", () => {
+            reset();
+
+            end_menu.style.display = "none";
+            start_menu.style.display = "flex";
+        })
 
         // [ Debug ]
         console.log("Player Defeat");
@@ -264,6 +301,20 @@ function game_manager(){
         game.style.display = "none";
         end_menu.style.display = "flex";
 
+
+        play_again.addEventListener("click", () => {
+            reset();
+
+            end_menu.style.display = "none";
+            game.style.display = "flex";
+        })
+        exit_game.addEventListener("click", () => {
+            reset();
+
+            end_menu.style.display = "none";
+            start_menu.style.display = "flex";
+            player_start.style.display = "block";
+        })
 
         // [ Debug ]
         console.log("CPU Defeat");
@@ -401,5 +452,10 @@ function place_ships(fleet, ships, coordinates){
                 console.log(`cpu_ships : [${cpu_ships}]`);
             }
         })
+    }
+}
+function clear_grid(grid){
+    while (grid.firstChild){
+        grid.removeChild(grid.firstChild);
     }
 }
