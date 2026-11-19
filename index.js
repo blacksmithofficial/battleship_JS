@@ -153,9 +153,6 @@ function display_grid(coordinates, parent){
                     }
                 }
             }
-        } else {
-            // [ Conditional ] : War Grid (Currently Shown)
-            strike(coordinates);
         }
     }
 }
@@ -239,12 +236,14 @@ function scope(){
         player_grid.style.display = "none";
         war_grid.style.display = "flex";
         grid_indicator.innerHTML = "ENEMY WATERS";
+        grid_indicator.style.color = "rgb(117, 10, 31)";
 
         display_grid(enemy_coordinates, war_grid);
     } else {
         war_grid.style.display = "none";
         player_grid.style.display = "flex";
         grid_indicator.innerHTML = "PLAYER WATERS";
+        grid_indicator.style.color = "whitesmoke";
 
         display_grid(game_coordinates, player_grid);
     }
