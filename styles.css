@@ -132,7 +132,7 @@ body{
     animation-iteration-count: infinite; */
 }
 #war_grid{
-    border: 3px solid crimson;
+    border: 3px solid rgb(117, 10, 31);
     display: flex;
     flex-wrap: wrap;
     background-color: black;

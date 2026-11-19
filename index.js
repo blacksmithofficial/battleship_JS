@@ -66,7 +66,7 @@ let game_coordinates = [];
 let enemy_coordinates = [];
 
 // [ System ] : Function calls 
-display_grid(enemy_coordinates, war_grid);
+game_manager();
 
 // [ Key takeaway : A DOM element can only exist in one position in the DOM at a time. ]
 //    [ Appending the same element repeatedly moves it rather than creating copies ]
@@ -173,6 +173,9 @@ function strike(coordinates){
                     player_strikes.push(parseInt(coordinate.id));
 
                     console.log("ENEMY HIT !");
+
+                    game_manager();
+                    
                     return;     // ( Exit Function )
                 } 
             }
@@ -199,8 +202,6 @@ function strike(coordinates){
             // [ Debug ]
             console.log(`player_fleet_health : ${player_fleet_health}`);
             console.log(`cpu_fleet_health : ${cpu_fleet_health}`);
-            // console.log(`player_strikes : [${player_strikes}]`); 
-            // console.log(`cpu_strikes : [${cpu_strikes}]`);
         })
     })
 }
@@ -250,6 +251,25 @@ function scope(){
 
     // [ Debug ]
     // console.log(`show_ships : ${show_ships}`);
+}
+function game_manager(){
+    // [ Conditional ] : Player Health <= 0
+    if(player_fleet_health === 0){
+        game.style.display = "none";
+        end_menu.style.display = "flex";
+
+        // [ Debug ]
+        console.log("Player Defeat");
+    } else if (cpu_fleet_health === 0){
+        game.style.display = "none";
+        end_menu.style.display = "flex";
+
+
+        // [ Debug ]
+        console.log("CPU Defeat");
+    } else {
+        display_grid(enemy_coordinates, war_grid);
+    }
 }
 
 // [ Functions ] : Set-up
