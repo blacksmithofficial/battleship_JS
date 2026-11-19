@@ -28,11 +28,15 @@ let show_ships = false;
 let ship_display_list = ["Destroyer", "Submarine", "Cruiser", "Battleship", "Aircraft Carrier"];
 let ship_length_reference = [2, 3, 3, 4, 5];
 let player_fleet = [[], [], [], [], []];
+let cpu_fleet = [[], [], [], [], []];
 let player_ships = [];
+let cpu_ships = [];
 let player_strikes = [];
+let cpu_strikes = [];
 let ship_display_count = 0;
 let user_name;
 let player_fleet_health = 17;
+let cpu_fleet_health = 17;
 
 // [ Setup ] : Event Listeners
 start_button.addEventListener("click", () => {
@@ -51,7 +55,7 @@ username_button.addEventListener("click", () => {
     let coordinates = [];
     display_grid(coordinates, setup_grid);
 
-    // [ Loop ] : Scan Every Cooordinate Box
+    // [ Loop ] : Place Player Ships
     let open_spaces = [];
     for(let i = 0; i < coordinates.length; i++){
         coordinates[i].addEventListener("click", ()=>{
@@ -97,16 +101,18 @@ username_button.addEventListener("click", () => {
             }
         })
     }
+
+    // [ Loop ] : Place CPU Ships
 }) 
 scope_button.addEventListener("click", () => {
-    scope();
-    
+    scope();  
 })
 
 // [ Variables ] : In-Game
 let game_coordinates = [];
 let enemy_coordinates = [];
 
+// [ System ] : Function calls 
 display_grid(enemy_coordinates, war_grid);
 
 // [ Key takeaway : A DOM element can only exist in one position in the DOM at a time. ]
@@ -167,10 +173,38 @@ function display_grid(coordinates, parent){
         if(parent === player_grid){
             // [ Loop ]
             for(let i = 0; i < coordinates.length; i++){
+                // Place Ships
                 for(let j = 0; j < player_ships.length; j++){
                     if(parseInt(coordinates[i].id) === player_ships[j]){
                         coordinates[i].style.backgroundColor = ship_color;
                     }
+                }
+
+                // Show Cpu Attacks
+                for(let j = 0; j < cpu_strikes.length; j++){
+                    if(parseInt(coordinates[i].id) === cpu_strikes[j]){
+                        coordinates[i].style.backgroundColor = strike_color;
+                        coordinates[i].style.animation = "missed_strike 0.3s alternate";
+                        coordinates[i].style.animationIterationCount = "infinite";
+                    }
+                }
+
+                // Check Ships
+                for(let j = 0; j < player_ships.length; j++){
+                    if(parseInt(coordinates[i].id) === player_ships[j]){
+                        for(let k = 0; k < cpu_strikes.length; k++){
+                            if(player_ships[j] === cpu_strikes[k]){
+                                coordinates[i].style.backgroundColor = hit_color;
+                                coordinates[i].style.animation = "hit_strike 0.3s alternate";
+                                coordinates[i].style.animationIterationCount = "infinite";
+                            }
+                        }
+                    }
+                    // if(player_ships[j] === cpu_strikes[j]){
+                    //     coordinates[i].style.backgroundColor = hit_color;
+                    //     coordinates[i].style.animation = "hit_strike 0.3s alternate";
+                    //     coordinates[i].style.animationIterationCount = "infinite";
+                    // }
                 }
             }
         } else {
@@ -186,27 +220,79 @@ function strike(coordinates){
             coordinate.style.animation = "missed_strike 0.3s alternate";
             coordinate.style.animationIterationCount = "infinite";
 
-            // [ Conditional ] : MISSED SHOT
-            shot_displays.forEach((display) => {
-                display.style.display = "flex";
-            })
-            setTimeout(() => {
-                shot_displays.forEach((display) => {
-                    display.style.display = "none";
-                })
-            }, 250)
+            // [ Conditional ]
+            if(coordinate.style.className == "hit_box"){
+                // console.log("Already Hit");
+                return;    // Exit Function
+            } else {
+                // coordinate.style.className = "hit_box";
+                player_strikes.push(parseInt(coordinate.id));
 
-            player_strikes.push(parseInt(coordinate.id));
-            // document.body.className = "trigger";
-            // document.body.style.animation = "missed_strike 0.1s alternate"
-            // document.body.style.animationIterationCount = "1";
-            // console.log(player_strikes);
+                // [ Conditional ] : Successfully Hit CPU 
+                for (let i = 0; i < cpu_ships.length; i++){
+                    if(parseInt(coordinate.id) === cpu_ships[i]){
+                        cpu_fleet_health--;
+
+                        // [ Debug ]
+                        console.log("!! ENEMY HIT !!");
+                        return;
+                    }
+                }
+
+                coordinate.style.className = "hit_box";
+                        
+                // [ Conditional ] : MISSED SHOT
+                shot_displays.forEach((display) => {
+                    display.style.display = "flex";
+                })
+                setTimeout(() => {
+                    shot_displays.forEach((display) => {
+                        display.style.display = "none";
+                    })
+                }, 250);
+
+                // [ CPU Attempt ] : cpu_strike()
+                cpu_strike();
+
+
+                // [ Debug ]
+                // console.log(coordinate.id);
+                console.log(`player_strikes : [${player_strikes}]`);
+            }
+
+            // // [ Conditional ] : MISSED SHOT
+            // shot_displays.forEach((display) => {
+            //     display.style.display = "flex";
+            // })
+            // setTimeout(() => {
+            //     shot_displays.forEach((display) => {
+            //         display.style.display = "none";
+            //     })
+            // }, 250)
         })
     })
-    // [ Conditional ] : MISSED SHOT
-    shot_displays.forEach((display) => {
-        display.style.display = "none";
-    });
+}
+
+function cpu_strike(){
+    // [ Generate random strikes ]
+    let strike = Math.floor(Math.random(0, 100) * 100);
+    cpu_strikes.push(strike);
+
+    // [ Loop ] : Iterate through Player Ships
+    for (let i = 0; i < player_ships.length; i++){
+        if(strike === player_ships[i]){
+
+            
+            // [ Debug ]
+            console.log("PLAYER HIT !!!");
+        }
+    }
+
+    // [ Check Player Fleet ]
+    display_grid(game_coordinates, player_grid);
+
+    console.log("cpu_strike()");
+    console.log(`cpu_strikes : [${cpu_strikes}]`);
 }
 function scope(){
     show_ships = !show_ships;

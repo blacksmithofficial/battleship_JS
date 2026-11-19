@@ -121,7 +121,7 @@ body{
     background-color: rgb(92, 92, 92);
     /* background-color: rgba(92, 92, 92, 0.658);
     background-color: rgba(92, 92, 92, 0.322); */
-    width: 680px;
+    width: 580px;
     height: 580px;
 
     border-radius: 10px;
@@ -149,7 +149,7 @@ body{
     width: 300px;
 }
 #grid_indicator{
-
+    color: lawngreen;
 }
 
 
@@ -168,6 +168,14 @@ body{
 @keyframes missed_strike {
     0%{
         background-color: whitesmoke;
+    }
+    100%{
+        background-color: rgba(245, 245, 245, 0.219);
+    }
+}
+@keyframes hit_strike {
+    0%{
+        background-color: crimson;
     }
     100%{
         background-color: rgba(245, 245, 245, 0.219);
