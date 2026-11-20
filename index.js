@@ -398,6 +398,7 @@ function place_ships(fleet, ships, coordinates){
     // [ Loop ] : Place Player Ships
     let open_spaces = [];
     let cpu_spaces = [];
+    let temp = [];
     for(let i = 0; i < coordinates.length; i++){
         coordinates[i].addEventListener("click", ()=>{
             // [ Conditional ] : Duplicate Check
@@ -416,6 +417,7 @@ function place_ships(fleet, ships, coordinates){
                     cpu_fleet[ship_display_count].push(parseInt(coordinates[location].id));
                     cpu_ships.push(parseInt(coordinates[location].id));
                     cpu_spaces = available_spaces(parseInt(coordinates[location].id));
+                    temp = available_spaces(parseInt(coordinates[location].id));
 
                     // [ Loop ] : Display Available Spaces
                     for(let i = 0; i < open_spaces.length; i++){
@@ -432,9 +434,10 @@ function place_ships(fleet, ships, coordinates){
                 
 
                 // [ Loop ] : Force available options ONLY
-                let index = Math.floor(Math.random(0, cpu_spaces.length) * cpu_spaces.length);
-                cpu_fleet[ship_display_count].push(cpu_spaces[index]);
-                cpu_ships.push(cpu_spaces[index]);
+                let index = Math.floor(Math.random(0, temp.length) * temp.length);
+                cpu_fleet[ship_display_count].push(temp[index]);
+                cpu_ships.push(temp[index]);
+                temp = temp.filter((num) => num != temp[index]);
 
                 for(let j = 0; j < open_spaces.length; j++){
                     // [ Conditional ] : Coordinate Equals Open Space
