@@ -288,13 +288,21 @@ function game_manager(){
             reset();
 
             end_menu.style.display = "none";
-            game.style.display = "flex";
+            game.style.display = "none";
+            start_menu.style.display = "flex";
+            player_setup.style.display = "flex";
+            ship_display.innerHTML = ship_display_list[ship_display_count];
+
+            let coordinates = [];
+            display_grid(coordinates, setup_grid);
+            place_ships(player_fleet, player_ships, coordinates);
         })
         exit_game.addEventListener("click", () => {
             reset();
 
             end_menu.style.display = "none";
             start_menu.style.display = "flex";
+            player_start.style.display = "block";
         })
 
         // [ Debug ]
@@ -308,7 +316,14 @@ function game_manager(){
             reset();
 
             end_menu.style.display = "none";
-            game.style.display = "flex";
+            game.style.display = "none";
+            start_menu.style.display = "flex";
+            player_setup.style.display = "flex";
+            ship_display.innerHTML = ship_display_list[ship_display_count];
+
+            let coordinates = [];
+            display_grid(coordinates, setup_grid);
+            place_ships(player_fleet, player_ships, coordinates);
         })
         exit_game.addEventListener("click", () => {
             reset();
