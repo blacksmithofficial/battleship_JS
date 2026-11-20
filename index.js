@@ -30,10 +30,10 @@ const hit_color = "crimson";
 let show_ships = false;
 let ship_display_list = ["Destroyer", "Submarine", "Cruiser", "Battleship", "Aircraft Carrier"];
 let ship_length_reference = [2, 3, 3, 4, 5];
-let player_fleet = [[], [], [], [], []];    // x
-let cpu_fleet = [[], [], [], [], []];       // x
-let player_ships = [];                      // x
-let cpu_ships = [];                         // x
+let player_fleet = [[], [], [], [], []];        // x
+let cpu_fleet = [[], [], [], [], []];           // x
+let player_ships = [];                          // x
+let cpu_ships = [];                             // x
 let player_strikes = [];                    
 let cpu_strikes = [];
 let ship_display_count = 0;
@@ -274,6 +274,8 @@ function reset(){
     cpu_fleet_health = 17;
     ship_display_count = 0;
     user_name = "";
+
+    game_manager();
 
 }
 function game_manager(){
